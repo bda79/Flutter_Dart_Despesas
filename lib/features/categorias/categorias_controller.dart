@@ -11,14 +11,12 @@ final categoriasProvider =
 class CategoriasController extends StateNotifier<AsyncValue<List<Categoria>>> {
   final _service = CategoriasService();
 
-  CategoriasController() : super(const AsyncValue.loading()) {
-    load();
-  }
+  CategoriasController() : super(const AsyncValue.loading());
 
+  /// 👇 AGORA SÓ CARREGA QUANDO FOR CHAMADO EXPLICITAMENTE
   Future<void> load() async {
     try {
       final data = await _service.getCategorias();
-
       state = AsyncValue.data(data);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -28,7 +26,6 @@ class CategoriasController extends StateNotifier<AsyncValue<List<Categoria>>> {
   Future<Categoria> getOrCreateCategoria(String nome) async {
     final list = state.valueOrNull ?? [];
 
-    // 1. se já existe, retorna
     final existente = list.where(
       (c) => c.nome.toLowerCase() == nome.toLowerCase(),
     );
@@ -37,10 +34,8 @@ class CategoriasController extends StateNotifier<AsyncValue<List<Categoria>>> {
       return existente.first;
     }
 
-    // 2. se não existe, cria no backend
     final nova = await _service.createCategoria(nome);
 
-    // 3. atualiza estado local
     state = AsyncValue.data([...list, nova]);
 
     return nova;

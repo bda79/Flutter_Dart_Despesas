@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../core/api/dio_client.dart';
+import '../../core/network/request_manager.dart';
 import '../../core/storage/secure_storage.dart';
 import '../../core/utils/constants.dart';
 
@@ -8,7 +9,7 @@ class AuthService {
   final Dio _dio = DioClient.dio;
 
   Future<bool> login(String user, String pass) async {
-    try {
+    return await RequestManager.run(() async {
       final res = await _dio.post(
         AppConstants.token,
         data: {"username": user, "password": pass},
@@ -19,9 +20,7 @@ class AuthService {
       await SecureStorage.saveRefreshToken(res.data["refresh"]);
 
       return true;
-    } catch (_) {
-      return false;
-    }
+    });
   }
 
   Future<void> logout() async {
@@ -29,7 +28,9 @@ class AuthService {
 
     if (refresh != null) {
       try {
-        await _dio.post(AppConstants.logout, data: {"refresh": refresh});
+        await RequestManager.run(() async {
+          await _dio.post(AppConstants.logout, data: {"refresh": refresh});
+        });
       } catch (_) {}
     }
 
@@ -38,8 +39,10 @@ class AuthService {
 
   Future<Map<String, dynamic>?> me() async {
     try {
-      final res = await _dio.get(AppConstants.me);
-      return res.data;
+      return await RequestManager.run(() async {
+        final res = await _dio.get(AppConstants.me);
+        return res.data;
+      });
     } catch (_) {
       return null;
     }
@@ -50,15 +53,17 @@ class AuthService {
       final refresh = await SecureStorage.getRefreshToken();
       if (refresh == null) return null;
 
-      final res = await _dio.post(
-        AppConstants.refresh,
-        data: {"refresh": refresh},
-      );
+      return await RequestManager.run(() async {
+        final res = await _dio.post(
+          AppConstants.refresh,
+          data: {"refresh": refresh},
+        );
 
-      final newAccess = res.data["access"];
-      await SecureStorage.saveAccessToken(newAccess);
+        final newAccess = res.data["access"];
+        await SecureStorage.saveAccessToken(newAccess);
 
-      return newAccess;
+        return newAccess;
+      });
     } catch (_) {
       return null;
     }

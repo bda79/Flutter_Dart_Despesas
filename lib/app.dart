@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/core/utils/constants.dart';
-import 'package:flutter_app/core/ui/loading_overlay.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/ui/app_feedback_overlay.dart';
 import 'router/app_router.dart';
 
 class App extends ConsumerWidget {
@@ -14,7 +14,7 @@ class App extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: ref.watch(appRouterProvider),
       builder: (context, child) {
-        return LoadingOverlay.wrap(child!);
+        return AppFeedbackOverlay(child: child!);
       },
       title: AppConstants.appName,
       theme: ThemeData(

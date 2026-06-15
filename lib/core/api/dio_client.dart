@@ -10,8 +10,9 @@ class DioClient {
     BaseOptions(
       baseUrl: AppConstants.baseUrl,
       headers: {"Content-Type": "application/json"},
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 15),
+      connectTimeout: Duration(seconds: 45),
+      receiveTimeout: Duration(seconds: 45),
+      sendTimeout: Duration(seconds: 45),
     ),
   )..interceptors.add(AuthInterceptor());
 

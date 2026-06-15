@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
-import '../ui/loading_overlay.dart';
+
+import '../ui/app_feedback_service.dart';
 
 class RequestManager {
   static Future<T> run<T>(
@@ -8,7 +9,8 @@ class RequestManager {
   }) async {
     try {
       if (showLoading) {
-        LoadingOverlay.loading.value = true;
+        AppFeedbackService.showLoading();
+        ;
       }
 
       final result = await request();
@@ -19,7 +21,7 @@ class RequestManager {
       rethrow;
     } finally {
       if (showLoading) {
-        LoadingOverlay.loading.value = false;
+        AppFeedbackService.hideLoading();
       }
     }
   }

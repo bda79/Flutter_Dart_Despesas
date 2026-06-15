@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/ui/app_feedback_service.dart';
 import '../categorias/categorias_controller.dart';
 import '../categorias/categorias_model.dart';
 import 'despesas_controller.dart';
@@ -21,6 +22,16 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
 
   Categoria? categoriaSelecionada;
   String categoriaTexto = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 🔥 IMPORTANTE: carregar categorias fora do build
+    Future.microtask(() {
+      ref.read(categoriasProvider.notifier).load();
+    });
+  }
 
   @override
   void dispose() {
@@ -57,15 +68,13 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
             data: data ?? DateTime.now(),
           );
 
+      AppFeedbackService.showSuccess("Despesa criada com sucesso");
+
       if (!mounted) return;
 
       Navigator.pop(context);
     } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Erro ao guardar despesa")));
+      AppFeedbackService.showError("Erro ao guardar despesa");
     }
   }
 
@@ -79,7 +88,6 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // TIPO
             DropdownButton<String>(
               value: tipo,
               items: const [
@@ -91,7 +99,6 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
 
             const SizedBox(height: 10),
 
-            // CATEGORIA
             categoriasAsync.when(
               loading: () => const CircularProgressIndicator(),
               error: (e, _) => TextField(
@@ -134,7 +141,6 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
 
             const SizedBox(height: 10),
 
-            // VALOR
             TextField(
               controller: valorCtrl,
               keyboardType: TextInputType.number,
@@ -143,7 +149,6 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
 
             const SizedBox(height: 10),
 
-            // DATA
             ElevatedButton(
               onPressed: () async {
                 final picked = await showDatePicker(
@@ -166,7 +171,6 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
 
             const SizedBox(height: 10),
 
-            // DESCRIÇÃO
             TextField(
               controller: descricaoCtrl,
               decoration: const InputDecoration(labelText: "Descrição"),
@@ -174,7 +178,6 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
 
             const Spacer(),
 
-            // BOTÃO
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
