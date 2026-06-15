@@ -24,6 +24,9 @@ class DioClient {
 }
 
 class AuthInterceptor extends Interceptor {
+  bool _isRefreshing = false;
+  final List<RequestOptions> _queue = [];
+
   @override
   Future<void> onRequest(
     RequestOptions options,
@@ -43,36 +46,51 @@ class AuthInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    if (err.response?.statusCode == 401) {
-      final refresh = await SecureStorage.getRefreshToken();
-
-      if (refresh != null) {
-        try {
-          final res = await DioClient.refreshDio.post(
-            AppConstants.refresh,
-            data: {"refresh": refresh},
-          );
-
-          final newToken = res.data["access"];
-
-          await SecureStorage.saveAccessToken(newToken);
-
-          final request = err.requestOptions;
-          request.headers["Authorization"] = "Bearer $newToken";
-
-          final retry = await DioClient.dio.fetch(request);
-
-          return handler.resolve(retry);
-        } catch (e) {
-          await SecureStorage.clear();
-          DioClient.onLogout?.call();
-        }
-      } else {
-        await SecureStorage.clear();
-        DioClient.onLogout?.call();
-      }
+    if (err.response?.statusCode != 401) {
+      return handler.next(err);
     }
 
-    handler.next(err);
+    final refresh = await SecureStorage.getRefreshToken();
+
+    if (refresh == null) {
+      await SecureStorage.clear();
+      return handler.next(err);
+    }
+
+    try {
+      if (_isRefreshing) {
+        _queue.add(err.requestOptions);
+        return;
+      }
+
+      _isRefreshing = true;
+
+      final res = await DioClient.refreshDio.post(
+        AppConstants.refresh,
+        data: {"refresh": refresh},
+      );
+
+      final newToken = res.data["access"];
+
+      await SecureStorage.saveAccessToken(newToken);
+
+      _isRefreshing = false;
+
+      // retry request original
+      final request = err.requestOptions;
+      request.headers["Authorization"] = "Bearer $newToken";
+
+      final retry = await DioClient.dio.fetch(request);
+
+      return handler.resolve(retry);
+    } catch (e) {
+      _isRefreshing = false;
+
+      await SecureStorage.clear();
+
+      DioClient.onLogout?.call();
+
+      return handler.next(err);
+    }
   }
 }

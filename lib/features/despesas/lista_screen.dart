@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/ui/skeleton.dart';
 import '../auth/auth_controller.dart';
 import 'despesas_controller.dart';
 
@@ -30,7 +31,13 @@ class ListaScreen extends ConsumerWidget {
         ],
       ),
       body: despesas.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => ListView.builder(
+          itemCount: 6,
+          itemBuilder: (_, _) => const ListTile(
+            title: SkeletonBox(),
+            subtitle: SkeletonBox(width: 120),
+          ),
+        ),
 
         error: (err, _) => Center(child: Text("Erro: $err")),
 

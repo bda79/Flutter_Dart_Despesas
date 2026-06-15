@@ -48,6 +48,7 @@ class AuthService {
   Future<String?> refreshToken() async {
     try {
       final refresh = await SecureStorage.getRefreshToken();
+      if (refresh == null) return null;
 
       final res = await _dio.post(
         AppConstants.refresh,

@@ -1,26 +1,36 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/network/request_manager.dart';
 import 'despesas_model.dart';
 import 'despesas_service.dart';
 
 final despesasProvider =
-    AsyncNotifierProvider<DespesasController, List<Despesa>>(
-      DespesasController.new,
+    StateNotifierProvider<DespesasController, AsyncValue<List<Despesa>>>(
+      (ref) => DespesasController(),
     );
 
-class DespesasController extends AsyncNotifier<List<Despesa>> {
+class DespesasController extends StateNotifier<AsyncValue<List<Despesa>>> {
   final _service = DespesasService();
 
-  @override
-  Future<List<Despesa>> build() async {
-    return await _service.getDespesas();
+  DespesasController() : super(const AsyncValue.loading()) {
+    load();
+  }
+
+  Future<void> load() async {
+    try {
+      final data = await RequestManager.run(() => _service.getDespesas());
+
+      state = AsyncValue.data(data);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
   }
 
   Future<void> refresh() async {
-    state = const AsyncLoading();
+    final data = await RequestManager.run(
+      () => _service.getDespesas(forceRefresh: true),
+    );
 
-    state = await AsyncValue.guard(() async {
-      return await _service.getDespesas();
-    });
+    state = AsyncValue.data(data);
   }
 }
