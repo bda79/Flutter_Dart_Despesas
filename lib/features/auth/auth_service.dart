@@ -1,26 +1,22 @@
 import 'package:dio/dio.dart';
 
+import '../../core/api/dio_client.dart';
 import '../../core/storage/secure_storage.dart';
 import '../../core/utils/constants.dart';
 
 class AuthService {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: AppConstants.baseUrl,
-      headers: {'Content-Type': 'application/json'},
-    ),
-  );
+  final Dio _dio = DioClient.dio;
 
-  Future<bool> login(String username, String password) async {
+  Future<bool> login(String user, String pass) async {
     try {
-      final response = await _dio.post(
+      final res = await _dio.post(
         AppConstants.token,
-        data: {'username': username, 'password': password},
+        data: {"username": user, "password": pass},
       );
 
-      await SecureStorage.saveAccessToken(response.data['access']);
+      await SecureStorage.saveAccessToken(res.data["access"]);
 
-      await SecureStorage.saveRefreshToken(response.data['refresh']);
+      await SecureStorage.saveRefreshToken(res.data["refresh"]);
 
       return true;
     } catch (_) {
@@ -40,10 +36,10 @@ class AuthService {
     await SecureStorage.clear();
   }
 
-  Future<Map<String, dynamic>?> getMe() async {
+  Future<Map<String, dynamic>?> me() async {
     try {
-      final response = await _dio.get(AppConstants.me);
-      return response.data;
+      final res = await _dio.get(AppConstants.me);
+      return res.data;
     } catch (_) {
       return null;
     }
@@ -55,10 +51,10 @@ class AuthService {
 
       final res = await _dio.post(
         AppConstants.refresh,
-        data: {'refresh': refresh},
+        data: {"refresh": refresh},
       );
 
-      final newAccess = res.data['access'];
+      final newAccess = res.data["access"];
       await SecureStorage.saveAccessToken(newAccess);
 
       return newAccess;

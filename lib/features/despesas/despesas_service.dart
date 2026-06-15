@@ -1,10 +1,14 @@
+import 'package:flutter_app/core/utils/constants.dart';
+
 import '../../core/api/dio_client.dart';
-import '../../core/utils/constants.dart';
+import 'despesas_model.dart';
 
 class DespesasService {
-  Future<List<dynamic>> getDespesas() async {
-    final response = await DioClient.dio.get(AppConstants.despesas);
+  Future<List<Despesa>> getDespesas() async {
+    final res = await DioClient.dio.get(AppConstants.despesas);
 
-    return response.data;
+    final List data = res.data['results'];
+
+    return data.map((e) => Despesa.fromJson(e)).toList();
   }
 }

@@ -2,21 +2,28 @@ import 'package:dio/dio.dart';
 
 import '../storage/secure_storage.dart';
 import '../utils/constants.dart';
-import '../../features/auth/auth_service.dart';
 
 class DioClient {
+  static Function? onLogout;
+
   static final Dio dio = Dio(
     BaseOptions(
       baseUrl: AppConstants.baseUrl,
+      headers: {"Content-Type": "application/json"},
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
     ),
-  )..interceptors.add(_AuthInterceptor());
+  )..interceptors.add(AuthInterceptor());
+
+  static final Dio refreshDio = Dio(
+    BaseOptions(
+      baseUrl: AppConstants.baseUrl,
+      headers: {"Content-Type": "application/json"},
+    ),
+  );
 }
 
-class _AuthInterceptor extends Interceptor {
-  final AuthService auth = AuthService();
-
+class AuthInterceptor extends Interceptor {
   @override
   Future<void> onRequest(
     RequestOptions options,
@@ -25,7 +32,7 @@ class _AuthInterceptor extends Interceptor {
     final token = await SecureStorage.getAccessToken();
 
     if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
+      options.headers["Authorization"] = "Bearer $token";
     }
 
     handler.next(options);
@@ -36,19 +43,33 @@ class _AuthInterceptor extends Interceptor {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
-    // 🔥 Se token expirou (401)
     if (err.response?.statusCode == 401) {
-      final newToken = await auth.refreshToken();
+      final refresh = await SecureStorage.getRefreshToken();
 
-      if (newToken != null) {
-        final request = err.requestOptions;
+      if (refresh != null) {
+        try {
+          final res = await DioClient.refreshDio.post(
+            AppConstants.refresh,
+            data: {"refresh": refresh},
+          );
 
-        request.headers['Authorization'] = 'Bearer $newToken';
+          final newToken = res.data["access"];
 
-        final retry = await DioClient.dio.fetch(request);
-        return handler.resolve(retry);
+          await SecureStorage.saveAccessToken(newToken);
+
+          final request = err.requestOptions;
+          request.headers["Authorization"] = "Bearer $newToken";
+
+          final retry = await DioClient.dio.fetch(request);
+
+          return handler.resolve(retry);
+        } catch (e) {
+          await SecureStorage.clear();
+          DioClient.onLogout?.call();
+        }
       } else {
-        await auth.logout();
+        await SecureStorage.clear();
+        DioClient.onLogout?.call();
       }
     }
 

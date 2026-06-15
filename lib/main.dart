@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/app.dart';
+import 'package:flutter_app/core/api/dio_client.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/router/app_router.dart';
+import 'features/auth/auth_controller.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final container = ProviderContainer();
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: appRouter,
-    );
-  }
+  DioClient.onLogout = () {
+    container.read(authProvider.notifier).logout();
+  };
+
+  await container.read(authProvider.notifier).init();
+
+  runApp(UncontrolledProviderScope(container: container, child: const App()));
 }
