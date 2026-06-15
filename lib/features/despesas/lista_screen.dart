@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/ui/skeleton.dart';
 import '../auth/auth_controller.dart';
 import 'despesas_controller.dart';
+import 'nova_despesa_screen.dart';
 
 class ListaScreen extends ConsumerWidget {
   const ListaScreen({super.key});
@@ -16,6 +17,15 @@ class ListaScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text("Minhas Despesas"),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NovaDespesaScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
@@ -54,7 +64,21 @@ class ListaScreen extends ConsumerWidget {
               return ListTile(
                 title: Text(d.descricao),
                 subtitle: Text(d.categoria),
-                trailing: Text("${d.valor} €"),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("${d.valor} €"),
+
+                    if (d.isPending) ...[
+                      const SizedBox(width: 8),
+                      const SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ],
+                  ],
+                ),
               );
             },
           );

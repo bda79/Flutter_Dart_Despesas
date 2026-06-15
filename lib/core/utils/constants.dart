@@ -9,4 +9,5 @@ class AppConstants {
   static const String register = 'api/register/';
   static const String me = 'api/me/';
   static const String despesas = 'api/despesas/';
+  static const String categorias = 'api/categorias/';
 }
