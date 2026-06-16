@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ui/app_feedback_service.dart';
+import '../../core/utils/constants.dart';
 import 'auth_controller.dart';
+import 'forgot_password_screen.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -63,7 +66,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Control Despesas",
+                    AppConstants.appName,
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
 
@@ -93,6 +96,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: _login,
                       child: const Text("Login"),
                     ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ForgotPasswordScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text("Esqueceu-se da password?"),
+                    ),
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Não tem conta?"),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const RegisterScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text("Registar"),
+                      ),
+                    ],
                   ),
                 ],
               ),

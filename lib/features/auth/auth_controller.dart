@@ -59,4 +59,24 @@ class AuthController extends StateNotifier<AuthState> {
 
     state = const AuthState(AuthStatus.unauthenticated);
   }
+
+  Future<void> register({
+    required String username,
+    required String email,
+    required String password,
+  }) {
+    return _service.register(
+      username: username,
+      email: email,
+      password: password,
+    );
+  }
+
+  Future<void> resetPassword(String email) {
+    return _service.resetPassword(email);
+  }
+
+  Future<void> confirmPasswordReset(String token, String password) async {
+    await _service.confirmPasswordReset(token, password);
+  }
 }

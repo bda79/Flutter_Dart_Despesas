@@ -10,7 +10,6 @@ class RequestManager {
     try {
       if (showLoading) {
         AppFeedbackService.showLoading();
-        ;
       }
 
       final result = await request();

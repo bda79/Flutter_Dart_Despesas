@@ -16,11 +16,10 @@ class AuthService {
       );
 
       await SecureStorage.saveAccessToken(res.data["access"]);
-
       await SecureStorage.saveRefreshToken(res.data["refresh"]);
 
       return true;
-    });
+    }).catchError((_) => false);
   }
 
   Future<void> logout() async {
@@ -67,5 +66,36 @@ class AuthService {
     } catch (_) {
       return null;
     }
+  }
+
+  Future<void> register({
+    required String username,
+    required String email,
+    required String password,
+  }) async {
+    await RequestManager.run(() async {
+      final res = await _dio.post(
+        AppConstants.register,
+        data: {"username": username, "email": email, "password": password},
+      );
+
+      await SecureStorage.saveAccessToken(res.data["access"]);
+      await SecureStorage.saveRefreshToken(res.data["refresh"]);
+    });
+  }
+
+  Future<void> resetPassword(String email) async {
+    await RequestManager.run(() async {
+      await _dio.post(AppConstants.passwordReset, data: {"email": email});
+    });
+  }
+
+  Future<void> confirmPasswordReset(String token, String password) async {
+    await RequestManager.run(() async {
+      await _dio.post(
+        AppConstants.passwordResetConfirm,
+        data: {"token": token, "password": password},
+      );
+    });
   }
 }
