@@ -72,8 +72,8 @@ class AuthController extends StateNotifier<AuthState> {
     );
   }
 
-  Future<void> resetPassword(String email) {
-    return _service.resetPassword(email);
+  Future<String?> resetPassword(String email) async {
+    return await _service.resetPassword(email);
   }
 
   Future<void> confirmPasswordReset(String token, String password) async {

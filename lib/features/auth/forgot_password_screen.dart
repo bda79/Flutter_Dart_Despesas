@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ui/app_feedback_service.dart';
+import 'reset_password_screen.dart';
 import 'auth_controller.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
@@ -22,18 +23,31 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   }
 
   Future<void> _resetPassword() async {
+    final email = emailCtrl.text.trim();
+
+    if (email.isEmpty) {
+      AppFeedbackService.showError("Introduza o email");
+      return;
+    }
+
     try {
-      await ref
-          .read(authProvider.notifier)
-          .resetPassword(emailCtrl.text.trim());
+      final token = await ref.read(authProvider.notifier).resetPassword(email);
 
       if (!mounted) return;
 
-      AppFeedbackService.showSuccess("Se o email existir, receberá instruções");
-
-      Navigator.pop(context);
-    } catch (e) {
-      AppFeedbackService.showError("Erro ao enviar recuperação");
+      if (token != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ResetPasswordScreen(token: token)),
+        );
+      } else {
+        AppFeedbackService.showSuccess(
+          "Se o email existir, receberá instruções",
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
+      AppFeedbackService.showError("Erro ao enviar pedido");
     }
   }
 

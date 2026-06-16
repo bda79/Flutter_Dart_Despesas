@@ -83,11 +83,28 @@ class AuthService {
       await SecureStorage.saveRefreshToken(res.data["refresh"]);
     });
   }
-
+  /* via resend
   Future<void> resetPassword(String email) async {
     await RequestManager.run(() async {
       await _dio.post(AppConstants.passwordReset, data: {"email": email});
     });
+  } */
+
+  Future<String?> resetPassword(String email) async {
+    final res = await RequestManager.run(() async {
+      return await _dio.post(
+        AppConstants.passwordReset,
+        data: {"email": email},
+      );
+    });
+
+    final data = res.data;
+
+    if (data is Map && data.containsKey("token")) {
+      return data["token"];
+    }
+
+    return null;
   }
 
   Future<void> confirmPasswordReset(String token, String password) async {
