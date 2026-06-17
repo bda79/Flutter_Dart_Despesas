@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/auth_controller.dart';
 import '../features/auth/auth_state.dart';
 import '../features/auth/login_screen.dart';
+import '../features/auth/register_screen.dart';
+import '../features/auth/reset_password_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final auth = ref.watch(authProvider);
@@ -14,26 +16,44 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) {
+          final token = state.uri.queryParameters['token'];
+          return ResetPasswordScreen(token: token ?? '');
+        },
+      ),
       GoRoute(path: '/lista', builder: (context, state) => const ListaScreen()),
     ],
 
     redirect: (context, state) {
       final status = auth.status;
+      final location = state.matchedLocation;
 
-      // ainda a carregar app
+      // CRÍTICO: não decidir enquanto está a carregar
       if (status == AuthStatus.loading) {
         return null;
       }
 
       final isLogged = status == AuthStatus.authenticated;
 
-      final isLogin = state.matchedLocation == '/login';
+      const publicRoutes = ['/login', '/register', '/reset-password'];
 
-      if (!isLogged && !isLogin) {
+      final isPublicRoute = publicRoutes.any(
+        (route) => location.startsWith(route),
+      );
+
+      // bloqueia privadas
+      if (!isLogged && !isPublicRoute) {
         return '/login';
       }
 
-      if (isLogged && isLogin) {
+      // logged in não vê login/register
+      if (isLogged && (location == '/login' || location == '/register')) {
         return '/lista';
       }
 

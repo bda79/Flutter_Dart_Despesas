@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ui/app_feedback_service.dart';
+import '../../core/utils/api_error_helper.dart';
 import 'reset_password_screen.dart';
 import 'auth_controller.dart';
 
@@ -45,9 +46,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           "Se o email existir, receberá instruções",
         );
       }
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
-      AppFeedbackService.showError("Erro ao enviar pedido");
+      final msg = ApiErrorHelper.getMessage(e);
+      AppFeedbackService.showError(msg);
     }
   }
 

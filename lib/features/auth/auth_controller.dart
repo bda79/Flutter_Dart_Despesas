@@ -10,30 +10,34 @@ final authProvider = StateNotifierProvider<AuthController, AuthState>(
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
-
-  AuthController(this.ref) : super(const AuthState(AuthStatus.loading)) {
-    init();
-  }
-
   final _service = AuthService();
 
-  Future<void> init() async {
-    final hasToken = await SecureStorage.hasToken();
+  AuthController(this.ref) : super(const AuthState(AuthStatus.loading)) {
+    _init();
+  }
 
-    if (!hasToken) {
-      state = const AuthState(AuthStatus.unauthenticated);
-      return;
-    }
+  Future<void> _init() async {
+    try {
+      final hasToken = await SecureStorage.hasToken();
 
-    final me = await _service.me();
+      if (!hasToken) {
+        state = const AuthState(AuthStatus.unauthenticated);
+        return;
+      }
 
-    if (me == null) {
+      final me = await _service.me();
+
+      if (me == null) {
+        await SecureStorage.clear();
+        state = const AuthState(AuthStatus.unauthenticated);
+        return;
+      }
+
+      state = const AuthState(AuthStatus.authenticated);
+    } catch (_) {
       await SecureStorage.clear();
       state = const AuthState(AuthStatus.unauthenticated);
-      return;
     }
-
-    state = const AuthState(AuthStatus.authenticated);
   }
 
   Future<bool> login(String user, String pass) async {
@@ -48,15 +52,7 @@ class AuthController extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     await _service.logout();
-
     await SecureStorage.clear();
-
-    state = const AuthState(AuthStatus.unauthenticated);
-  }
-
-  Future<void> forceLogout() async {
-    await SecureStorage.clear();
-
     state = const AuthState(AuthStatus.unauthenticated);
   }
 
@@ -72,11 +68,11 @@ class AuthController extends StateNotifier<AuthState> {
     );
   }
 
-  Future<String?> resetPassword(String email) async {
-    return await _service.resetPassword(email);
+  Future<String?> resetPassword(String email) {
+    return _service.resetPassword(email);
   }
 
-  Future<void> confirmPasswordReset(String token, String password) async {
-    await _service.confirmPasswordReset(token, password);
+  Future<void> confirmPasswordReset(String token, String password) {
+    return _service.confirmPasswordReset(token, password);
   }
 }

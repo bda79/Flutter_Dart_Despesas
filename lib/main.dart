@@ -1,3 +1,4 @@
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,6 +11,7 @@ import 'core/sync/sync_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
 
   await Hive.initFlutter();
 
@@ -17,10 +19,10 @@ void main() async {
 
   final container = ProviderContainer();
   AppFeedbackService.init(container);
+
   DioClient.onLogout = () {
     container.read(authProvider.notifier).logout();
   };
-  await container.read(authProvider.notifier).init();
 
   runApp(UncontrolledProviderScope(container: container, child: const App()));
 }

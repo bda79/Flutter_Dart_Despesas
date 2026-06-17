@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ui/app_feedback_service.dart';
+import '../../core/utils/api_error_helper.dart';
 import 'auth_controller.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -39,7 +40,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       AppFeedbackService.showSuccess("Conta criada com sucesso");
       Navigator.pop(context);
     } catch (e) {
-      AppFeedbackService.showError("Erro ao criar conta");
+      final msg = ApiErrorHelper.getMessage(e);
+      AppFeedbackService.showError(msg);
     }
   }
 

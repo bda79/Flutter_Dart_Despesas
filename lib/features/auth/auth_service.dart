@@ -9,17 +9,21 @@ class AuthService {
   final Dio _dio = DioClient.dio;
 
   Future<bool> login(String user, String pass) async {
-    return await RequestManager.run(() async {
-      final res = await _dio.post(
-        AppConstants.token,
-        data: {"username": user, "password": pass},
-      );
+    try {
+      return await RequestManager.run(() async {
+        final res = await _dio.post(
+          AppConstants.token,
+          data: {"username": user, "password": pass},
+        );
 
-      await SecureStorage.saveAccessToken(res.data["access"]);
-      await SecureStorage.saveRefreshToken(res.data["refresh"]);
+        await SecureStorage.saveAccessToken(res.data["access"]);
+        await SecureStorage.saveRefreshToken(res.data["refresh"]);
 
-      return true;
-    }).catchError((_) => false);
+        return true;
+      });
+    } on DioException {
+      rethrow;
+    }
   }
 
   Future<void> logout() async {
@@ -73,7 +77,7 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    await RequestManager.run(() async {
+    return await RequestManager.run(() async {
       final res = await _dio.post(
         AppConstants.register,
         data: {"username": username, "email": email, "password": password},
@@ -83,12 +87,6 @@ class AuthService {
       await SecureStorage.saveRefreshToken(res.data["refresh"]);
     });
   }
-  /* via resend
-  Future<void> resetPassword(String email) async {
-    await RequestManager.run(() async {
-      await _dio.post(AppConstants.passwordReset, data: {"email": email});
-    });
-  } */
 
   Future<String?> resetPassword(String email) async {
     final res = await RequestManager.run(() async {

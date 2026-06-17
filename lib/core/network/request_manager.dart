@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
-
+import 'package:dio/dio.dart';
 import '../ui/app_feedback_service.dart';
 
 class RequestManager {
   static Future<T> run<T>(
-    Future<T> Function() request, {
+    Future<T> Function() action, {
     bool showLoading = true,
   }) async {
     try {
@@ -12,11 +11,23 @@ class RequestManager {
         AppFeedbackService.showLoading();
       }
 
-      final result = await request();
+      final result = await action();
 
       return result;
+    } on DioException catch (e) {
+      final data = e.response?.data;
+
+      if (data is Map) {
+        throw DioException(
+          requestOptions: e.requestOptions,
+          response: e.response,
+          type: e.type,
+          error: data, // mantém payload do backend
+        );
+      }
+
+      rethrow;
     } catch (e) {
-      debugPrint("API ERROR: $e");
       rethrow;
     } finally {
       if (showLoading) {

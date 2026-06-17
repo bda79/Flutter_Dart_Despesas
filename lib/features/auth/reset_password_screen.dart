@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/ui/app_feedback_service.dart';
+import '../../core/utils/api_error_helper.dart';
 import 'auth_controller.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
@@ -38,8 +39,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
       AppFeedbackService.showSuccess("Password alterada com sucesso");
       Navigator.pop(context);
-    } catch (_) {
-      AppFeedbackService.showError("Erro ao alterar password");
+    } catch (e) {
+      final msg = ApiErrorHelper.getMessage(e);
+      AppFeedbackService.showError(msg);
     }
   }
 
