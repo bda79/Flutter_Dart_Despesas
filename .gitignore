@@ -47,3 +47,7 @@ app.*.map.json
 # AI prompt
 Django.md
 LAYOUT_COMPARISON.md
+DESPESAS_PLAN.md
+
+#backend
+backend/*

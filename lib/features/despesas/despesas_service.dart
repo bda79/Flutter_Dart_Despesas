@@ -61,4 +61,28 @@ class DespesasService {
       rethrow;
     }
   }
+
+  Future<Despesa> updateDespesa(int id, Map<String, dynamic> data) async {
+    final safeData = Map<String, dynamic>.from(data);
+
+    safeData["data"] = (safeData["data"] is DateTime)
+        ? (safeData["data"] as DateTime).toIso8601String().split("T")[0]
+        : safeData["data"];
+
+    final res = await RequestManager.run(() async {
+      final response = await DioClient.dio.put(
+        '${AppConstants.despesas}$id/',
+        data: safeData,
+      );
+      return Despesa.fromJson(response.data);
+    }, showLoading: false);
+
+    return res;
+  }
+
+  Future<void> deleteDespesa(int id) async {
+    await RequestManager.run(() async {
+      await DioClient.dio.delete('${AppConstants.despesas}$id/');
+    }, showLoading: false);
+  }
 }

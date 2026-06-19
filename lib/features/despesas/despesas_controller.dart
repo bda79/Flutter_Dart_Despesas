@@ -89,4 +89,30 @@ class DespesasController extends StateNotifier<AsyncValue<List<Despesa>>> {
       // Mantém a despesa no estado local para sincronizar depois
     }
   }
+
+  Future<void> updateDespesa(int id, Map<String, dynamic> data) async {
+    try {
+      final updatedDespesa = await _service.updateDespesa(id, data);
+      final updatedList = (state.valueOrNull ?? [])
+          .map((d) => d.id == id ? updatedDespesa : d)
+          .toList();
+      state = AsyncValue.data(updatedList);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      rethrow;
+    }
+  }
+
+  Future<void> deleteDespesa(int id) async {
+    try {
+      await _service.deleteDespesa(id);
+      final updatedList = (state.valueOrNull ?? [])
+          .where((d) => d.id != id)
+          .toList();
+      state = AsyncValue.data(updatedList);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      rethrow;
+    }
+  }
 }
