@@ -1,5 +1,5 @@
-import '../cache/hive_cache.dart';
-import 'sync_action.dart';
+import 'package:flutter_app/core/cache/hive_cache.dart';
+import 'package:flutter_app/core/sync/sync_action.dart';
 
 class SyncQueue {
   static const _key = "sync_queue";

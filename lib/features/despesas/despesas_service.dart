@@ -1,12 +1,11 @@
-import '../../core/api/dio_client.dart';
-import '../../core/cache/hive_cache.dart';
-import '../../core/network/paginated_response.dart';
-import '../../core/network/request_manager.dart';
-import '../../core/utils/constants.dart';
-import '../../core/sync/sync_action.dart';
-import '../../core/sync/sync_queue.dart';
-
-import 'despesas_model.dart';
+import 'package:flutter_app/core/api/dio_client.dart';
+import 'package:flutter_app/core/cache/hive_cache.dart';
+import 'package:flutter_app/core/network/paginated_response.dart';
+import 'package:flutter_app/core/network/request_manager.dart';
+import 'package:flutter_app/core/sync/sync_action.dart';
+import 'package:flutter_app/core/sync/sync_queue.dart';
+import 'package:flutter_app/core/utils/constants.dart';
+import 'package:flutter_app/features/despesas/despesas_model.dart';
 
 class DespesasService {
   static const _cacheKey = "despesas";

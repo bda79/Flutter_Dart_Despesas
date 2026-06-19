@@ -1,9 +1,8 @@
-import '../../core/api/dio_client.dart';
-import '../../core/network/paginated_response.dart';
-import '../../core/network/request_manager.dart';
-import '../../core/utils/constants.dart';
-
-import 'categorias_model.dart';
+import 'package:flutter_app/core/api/dio_client.dart';
+import 'package:flutter_app/core/network/paginated_response.dart';
+import 'package:flutter_app/core/network/request_manager.dart';
+import 'package:flutter_app/core/utils/constants.dart';
+import 'package:flutter_app/features/categorias/categorias_model.dart';
 
 class CategoriasService {
   Future<List<Categoria>> getCategorias() async {

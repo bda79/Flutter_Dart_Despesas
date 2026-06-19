@@ -11,7 +11,7 @@ class PaginatedResponse<T> {
     this.previous,
   });
 
-  /// 🔥 converte resposta API (lista OU paginado)
+  // converte resposta API (lista OU paginado)
   factory PaginatedResponse.fromJson(
     dynamic json,
     T Function(Map<String, dynamic>) fromJson,

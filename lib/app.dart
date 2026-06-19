@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/ui/app_feedback_overlay.dart';
 import 'package:flutter_app/core/utils/constants.dart';
+import 'package:flutter_app/router/app_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'core/ui/app_feedback_overlay.dart';
-import 'router/app_router.dart';
 
 class App extends ConsumerWidget {
   const App({super.key});

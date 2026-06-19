@@ -1,5 +1,5 @@
+import 'package:flutter_app/core/ui/app_feedback_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'app_feedback_state.dart';
 
 final appFeedbackProvider =
     StateNotifierProvider<AppFeedbackController, AppFeedbackState>(

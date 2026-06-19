@@ -27,7 +27,7 @@ class _NovaDespesaScreenState extends ConsumerState<NovaDespesaScreen> {
   void initState() {
     super.initState();
 
-    // 🔥 IMPORTANTE: carregar categorias fora do build
+    // carregar categorias fora do build
     Future.microtask(() {
       ref.read(categoriasProvider.notifier).load();
     });

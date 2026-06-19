@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
-
-import '../../core/api/dio_client.dart';
-import '../../core/network/request_manager.dart';
-import '../../core/storage/secure_storage.dart';
-import '../../core/utils/constants.dart';
+import 'package:flutter_app/core/api/dio_client.dart';
+import 'package:flutter_app/core/network/request_manager.dart';
+import 'package:flutter_app/core/storage/secure_storage.dart';
+import 'package:flutter_app/core/utils/constants.dart';
 
 class AuthService {
   final Dio _dio = DioClient.dio;

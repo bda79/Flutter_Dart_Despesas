@@ -1,12 +1,11 @@
+import 'package:flutter_app/features/auth/auth_controller.dart';
+import 'package:flutter_app/features/auth/auth_state.dart';
+import 'package:flutter_app/features/auth/login_screen.dart';
+import 'package:flutter_app/features/auth/register_screen.dart';
+import 'package:flutter_app/features/auth/reset_password_screen.dart';
 import 'package:flutter_app/features/despesas/lista_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../features/auth/auth_controller.dart';
-import '../features/auth/auth_state.dart';
-import '../features/auth/login_screen.dart';
-import '../features/auth/register_screen.dart';
-import '../features/auth/reset_password_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final auth = ref.watch(authProvider);

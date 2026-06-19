@@ -22,13 +22,13 @@ class AppFeedbackService {
   static void showError(String message) {
     _container?.read(appFeedbackProvider.notifier).showError(message);
 
-    Timer(const Duration(seconds: 3), clear);
+    Timer(const Duration(seconds: 5), clear);
   }
 
   static void showSuccess(String message) {
     _container?.read(appFeedbackProvider.notifier).showSuccess(message);
 
-    Timer(const Duration(seconds: 3), clear);
+    Timer(const Duration(seconds: 5), clear);
   }
 
   static void clear() {

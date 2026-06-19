@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/ui/app_feedback_service.dart';
+import 'package:flutter_app/core/utils/api_error_helper.dart';
+import 'package:flutter_app/features/auth/auth_controller.dart';
+import 'package:flutter_app/features/auth/reset_password_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/ui/app_feedback_service.dart';
-import '../../core/utils/api_error_helper.dart';
-import 'reset_password_screen.dart';
-import 'auth_controller.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});

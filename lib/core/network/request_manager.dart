@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../ui/app_feedback_service.dart';
+import 'package:flutter_app/core/ui/app_feedback_service.dart';
 
 class RequestManager {
   static Future<T> run<T>(

@@ -1,9 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-
-import '../api/dio_client.dart';
-import '../utils/constants.dart';
-import 'sync_queue.dart';
-import 'sync_action.dart';
+import 'package:flutter_app/core/api/dio_client.dart';
+import 'package:flutter_app/core/sync/sync_action.dart';
+import 'package:flutter_app/core/sync/sync_queue.dart';
+import 'package:flutter_app/core/utils/constants.dart';
 
 class SyncService {
   static Future<void> start() async {

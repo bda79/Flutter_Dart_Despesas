@@ -1,17 +1,20 @@
+import 'package:flutter_app/features/despesas/despesas_model.dart';
+import 'package:flutter_app/features/despesas/despesas_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'despesas_model.dart';
-import 'despesas_service.dart';
+final despesasServiceProvider = Provider<DespesasService>(
+  (ref) => DespesasService(),
+);
 
 final despesasProvider =
     StateNotifierProvider<DespesasController, AsyncValue<List<Despesa>>>(
-      (ref) => DespesasController(),
+      (ref) => DespesasController(ref.watch(despesasServiceProvider)),
     );
 
 class DespesasController extends StateNotifier<AsyncValue<List<Despesa>>> {
-  final _service = DespesasService();
+  final DespesasService _service;
 
-  DespesasController() : super(const AsyncValue.loading()) {
+  DespesasController(this._service) : super(const AsyncValue.loading()) {
     load();
   }
 

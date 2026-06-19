@@ -1,18 +1,20 @@
+import 'package:flutter_app/core/storage/secure_storage.dart';
+import 'package:flutter_app/features/auth/auth_service.dart';
+import 'package:flutter_app/features/auth/auth_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/storage/secure_storage.dart';
-import 'auth_service.dart';
-import 'auth_state.dart';
+final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
 final authProvider = StateNotifierProvider<AuthController, AuthState>(
-  (ref) => AuthController(ref),
+  (ref) => AuthController(ref, ref.watch(authServiceProvider)),
 );
 
 class AuthController extends StateNotifier<AuthState> {
   final Ref ref;
-  final _service = AuthService();
+  final AuthService _service;
 
-  AuthController(this.ref) : super(const AuthState(AuthStatus.loading)) {
+  AuthController(this.ref, this._service)
+    : super(const AuthState(AuthStatus.loading)) {
     _init();
   }
 

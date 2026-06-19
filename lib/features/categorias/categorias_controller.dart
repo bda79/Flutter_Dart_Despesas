@@ -1,19 +1,21 @@
+import 'package:flutter_app/features/categorias/categorias_model.dart';
+import 'package:flutter_app/features/categorias/categorias_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'categorias_model.dart';
-import 'categorias_service.dart';
+final categoriasServiceProvider = Provider<CategoriasService>(
+  (ref) => CategoriasService(),
+);
 
 final categoriasProvider =
     StateNotifierProvider<CategoriasController, AsyncValue<List<Categoria>>>(
-      (ref) => CategoriasController(),
+      (ref) => CategoriasController(ref.watch(categoriasServiceProvider)),
     );
 
 class CategoriasController extends StateNotifier<AsyncValue<List<Categoria>>> {
-  final _service = CategoriasService();
+  final CategoriasService _service;
 
-  CategoriasController() : super(const AsyncValue.loading());
+  CategoriasController(this._service) : super(const AsyncValue.loading());
 
-  /// 👇 AGORA SÓ CARREGA QUANDO FOR CHAMADO EXPLICITAMENTE
   Future<void> load() async {
     try {
       final data = await _service.getCategorias();

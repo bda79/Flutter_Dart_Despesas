@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/ui/skeleton.dart';
+import 'package:flutter_app/features/auth/auth_controller.dart';
+import 'package:flutter_app/features/despesas/despesas_controller.dart';
+import 'package:flutter_app/features/despesas/nova_despesa_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/ui/skeleton.dart';
-import '../auth/auth_controller.dart';
-import 'despesas_controller.dart';
-import 'nova_despesa_screen.dart';
 
 class ListaScreen extends ConsumerWidget {
   const ListaScreen({super.key});
