@@ -1,3 +1,5 @@
+import 'package:flutter_app/core/sync/sync_action.dart';
+import 'package:flutter_app/core/sync/sync_queue.dart';
 import 'package:flutter_app/features/despesas/despesas_model.dart';
 import 'package:flutter_app/features/despesas/despesas_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,28 +61,32 @@ class DespesasController extends StateNotifier<AsyncValue<List<Despesa>>> {
       isPending: true,
     );
 
+    // update: adiciona localmente
     state = AsyncValue.data([...current, temp]);
 
-    try {
-      final created = await _service.createDespesa({
-        "tipo": tipo,
-        "descricao": descricao,
-        "valor": valor,
-        "categoria": categoriaId,
-        "data": data.toIso8601String().split("T")[0],
-      });
+    final payload = {
+      "tipo": tipo,
+      "descricao": descricao,
+      "valor": valor,
+      "categoria": categoriaId,
+      "data": data.toIso8601String().split("T")[0],
+    };
 
+    try {
+      final created = await _service.createDespesa(payload);
+
+      // Sucesso: substitui pelo ID real do servidor
       final updated = (state.valueOrNull ?? [])
           .map((d) => d.id == temp.id ? created : d)
           .toList();
 
       state = AsyncValue.data(updated);
     } catch (_) {
-      final rollback = (state.valueOrNull ?? [])
-          .where((d) => d.id != temp.id)
-          .toList();
-
-      state = AsyncValue.data(rollback);
+      // Falha: mantém localmente com isPending=true e salva na fila
+      await SyncQueue.add(
+        SyncAction(type: SyncActionType.createDespesa, payload: payload),
+      );
+      // Mantém a despesa no estado local para sincronizar depois
     }
   }
 }

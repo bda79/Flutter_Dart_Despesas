@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/theme/app_theme.dart';
 import 'package:flutter_app/core/ui/app_feedback_overlay.dart';
 import 'package:flutter_app/core/utils/constants.dart';
 import 'package:flutter_app/router/app_router.dart';
@@ -16,10 +17,7 @@ class App extends ConsumerWidget {
         return AppFeedbackOverlay(child: child!);
       },
       title: AppConstants.appName,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
     );
   }
 }

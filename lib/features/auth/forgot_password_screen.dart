@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/theme/app_theme.dart';
 import 'package:flutter_app/core/ui/app_feedback_service.dart';
 import 'package:flutter_app/core/utils/api_error_helper.dart';
 import 'package:flutter_app/features/auth/auth_controller.dart';
@@ -66,6 +67,18 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
+                    "🔑 Recuperar Password",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.text,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  const Text(
                     "Introduza o email associado à conta",
                     textAlign: TextAlign.center,
                   ),
@@ -74,7 +87,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
                   TextField(
                     controller: emailCtrl,
-                    decoration: const InputDecoration(labelText: "Email"),
+                    decoration: const InputDecoration(
+                      labelText: "Email",
+                      prefixIcon: Icon(Icons.email),
+                    ),
                   ),
 
                   const SizedBox(height: 24),
@@ -82,9 +98,22 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                      ),
                       onPressed: _resetPassword,
-                      child: const Text("Enviar"),
+                      child: const Text("Enviar Email"),
                     ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Voltar ao Login"),
                   ),
                 ],
               ),

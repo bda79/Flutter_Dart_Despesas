@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/theme/app_theme.dart';
 import 'package:flutter_app/core/ui/app_feedback_service.dart';
 import 'package:flutter_app/core/utils/constants.dart';
 import 'package:flutter_app/features/auth/auth_controller.dart';
 import 'package:flutter_app/features/auth/forgot_password_screen.dart';
 import 'package:flutter_app/features/auth/register_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +18,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final userCtrl = TextEditingController();
   final passCtrl = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -67,8 +67,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    AppConstants.appName,
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    "🔐 ${AppConstants.appName}",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.text,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
 
                   const SizedBox(height: 32),
@@ -77,6 +82,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     controller: userCtrl,
                     decoration: const InputDecoration(
                       labelText: "Username ou Email",
+                      prefixIcon: Icon(Icons.person),
                     ),
                   ),
 
@@ -84,8 +90,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                   TextField(
                     controller: passCtrl,
-                    obscureText: true,
-                    decoration: const InputDecoration(labelText: "Password"),
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: "Password",
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                    ),
                     onSubmitted: (_) => _login(),
                   ),
 
@@ -94,6 +115,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                      ),
                       onPressed: _login,
                       child: const Text("Login"),
                     ),
@@ -129,7 +154,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                           );
                         },
-                        child: const Text("Registar"),
+                        child: const Text("Criar conta"),
                       ),
                     ],
                   ),
